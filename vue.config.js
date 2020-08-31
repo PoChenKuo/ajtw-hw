@@ -1,5 +1,6 @@
 module.exports = {
   publicPath: "",
+
   chainWebpack: config => {
     config.module
       .rule("vue")
@@ -10,4 +11,12 @@ module.exports = {
       });
   },
 
+  pwa: {
+    name: 'ajtw-hw',
+    themeColor: '#EF5C65',
+    manifestCrossorigin: 'anonymous',
+    manifestOptions: {
+      background_color: '#FFFFFF'
+    }
+  }
 };
