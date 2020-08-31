@@ -1,16 +1,13 @@
-const VueLoaderPlugin = require("vue-loader/lib/plugin");
-
 module.exports = {
-  module: {
-    rules: [
-      // ... other rules
-      {
-        test: /\.vue$/,
-        loader: "vue-loader"
-      }
-    ]
+  publicPath: "",
+  chainWebpack: config => {
+    config.module
+      .rule("vue")
+      .use("vue-loader")
+      .loader("vue-loader")
+      .tap(options => {
+        return options;
+      });
   },
-  configureWebpack: {
-    plugins: [new VueLoaderPlugin()]
-  }
+
 };
