@@ -8,7 +8,6 @@ export default new Vuex.Store({
     curPage: "",
     preference: {
       chart: "mostPopular",
-      maxResults: 12,
       regionCode: "TW"
     },
     videoCapacity: 0,

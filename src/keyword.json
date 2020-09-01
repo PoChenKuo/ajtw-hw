@@ -1,5 +1,7 @@
 {
-    "PAGE_KEY_HOME" : "home",
-    "PAGE_KEY_COLLECT": "collect",
-    "PAGE_KEY_VIDEO": "video"
+  "PAGE_KEY_HOME": "home",
+  "PAGE_KEY_COLLECT": "collect",
+  "PAGE_KEY_VIDEO": "video",
+  "MAXIMUM_VIDEO_SIZE": 100,
+  "DEFAULT_VIDEO_LENGTH_PER_PAGE": 12
 }

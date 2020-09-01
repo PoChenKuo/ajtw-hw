@@ -13,22 +13,25 @@
         :like="item.like"
       />
     </transition-group>
+    <page-switch />
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
 import { mapState, mapActions } from "vuex";
-import VideoCard from "@/components/VideoCard";
 import { ytAPI } from "@/youtubeDataAPI";
-import _KEYS from "@/keyword";
+
 import { getLikeAttachList } from "@/likeAttach";
+import VideoCard from "@/components/VideoCard";
+import PageSwitch from "@/components/PageSwitch";
+import _KEYS from "@/keyword";
 let _this = null;
 export default {
   name: "Home",
-  components: { VideoCard },
+  components: { VideoCard, PageSwitch },
   data() {
-    return { KEYWORD: _KEYS, pageSize: 12 };
+    return { KEYWORD: _KEYS, pageSize: _KEYS.DEFAULT_VIDEO_LENGTH_PER_PAGE };
   },
   computed: {
     ...mapState([
@@ -98,9 +101,9 @@ export default {
 
         if (!_this.checkVideoLoadingInitialStatus(data)) {
           const num =
-            data.pageInfo.totalResults <= 100
+            data.pageInfo.totalResults <= _this.KEYWORD.MAXIMUM_VIDEO_SIZE
               ? data.pageInfo.totalResults
-              : 100;
+              : _this.KEYWORD.MAXIMUM_VIDEO_SIZE;
           _this.setVideoCapacity(num);
         }
       });
