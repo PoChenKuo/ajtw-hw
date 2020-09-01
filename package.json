@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "serve": "vue-cli-service serve -H 107.174.206.104 -p 8081",
+    "serve": "vue-cli-service serve -p 8081",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint"
   },

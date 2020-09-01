@@ -33,7 +33,7 @@ export default {
   methods: {
     ...mapActions(["currentPage"]),
     init() {
-      this.currentPage(this.$route.name.toLowerCase());
+      this.currentPage((this.$route.name || "").toLowerCase());
     },
     middleMousedown(event) {
       this.mouseWheelDown = event.deltaY > 0;

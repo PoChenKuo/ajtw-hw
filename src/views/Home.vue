@@ -1,19 +1,30 @@
 <template>
   <div class="home">
-    <div @click="fetchVideos(12)">load more</div>
+    <!-- <div @click="fetchVideos(12)">load more</div> -->
+    <div class="list">
+      <video-card
+        v-for="(item,ind) in videoList"
+        :key="ind"
+        :code="item.code"
+        :description="item.description"
+        :title="item.title"
+        :image="item.image"
+        :duration="item.duration"
+      />
+    </div>
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
 import { mapState, mapActions } from "vuex";
-
+import VideoCard from "@/components/VideoCard";
 import { ytAPI } from "@/youtubeDataAPI";
 import _KEYS from "@/keyword";
 let _this = null;
 export default {
   name: "Home",
-  components: {},
+  components: { VideoCard },
   data() {
     return { KEYWORD: _KEYS, pageSize: 12 };
   },
@@ -24,7 +35,20 @@ export default {
       "nextPageToken",
       "videoCapacity",
       "videoSurfingPage"
-    ])
+    ]),
+    videoList() {
+      const source = this.storedVideos;
+      return source.map(e => {
+        const snippet = e.snippet;
+        return {
+          title: snippet.title,
+          description: snippet.description,
+          code: e.id,
+          image: snippet.thumbnails.default.url,
+          duration: e.contentDetails.duration
+        };
+      });
+    }
   },
   mounted() {
     this.$nextTick(() => {
@@ -94,3 +118,13 @@ export default {
   }
 };
 </script>
+
+<style lang="scss" scoped>
+.page-home {
+  .list {
+    display: flex;
+    justify-content: space-evenly;
+    flex-wrap: wrap;
+  }
+}
+</style>

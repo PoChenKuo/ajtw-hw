@@ -3,8 +3,10 @@
   height: 100%;
 }
 
+
+
 // pad
-@media screen and (min-width: 768px) and (max-width: 1280px) {
+@media screen and (max-width: 1280px) {
   #app {
     box-sizing: border-box;
     padding-bottom: 3em;
@@ -16,5 +18,13 @@
   #app {
     box-sizing: border-box;
     padding-bottom: 2em;
+  }
+}
+
+// desktop
+@media screen and (min-width: 1281px) {
+  #app {
+    padding-left: 260px;
+    box-sizing: border-box;
   }
 }
