@@ -6,6 +6,8 @@
   .image {
     width: 100%;
     padding-bottom: 50%;
+    transition: 0.16s ease-in-out;
+    background-color: #fff;
     background-repeat: no-repeat;
     background-position: center;
     background-size: cover;
@@ -36,6 +38,7 @@
   }
 
   .detail {
+    cursor: default;
     background: #fff;
     border-radius: 0 0 5px 5px;
     height: 0;
@@ -53,6 +56,18 @@
       box-sizing: border-box;
       padding-right: 30px;
       margin-bottom: 5px;
+      position: relative;
+      .like {
+        position: absolute;
+        top: 0;
+        right: 0;
+        color: #777;
+        cursor: pointer;
+        transition: 0.32s ease-out;
+        &.active {
+          color: #e6588d;
+        }
+      }
     }
     .description {
       color: #666;

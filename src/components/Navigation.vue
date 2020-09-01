@@ -43,9 +43,13 @@ import {
 export default {
   name: "Navigation",
   components: {
+    // eslint-disable-next-line vue/no-unused-components
     fasTv,
+    // eslint-disable-next-line vue/no-unused-components
     fasBookmark,
+    // eslint-disable-next-line vue/no-unused-components
     fasCogs,
+    // eslint-disable-next-line vue/no-unused-components
     fasSwatchbook
   },
   props: ["curPage"],
@@ -60,9 +64,7 @@ export default {
     };
   },
   mounted() {
-    // _this = this;
     this.$nextTick(() => {
-      // this.initNavigation();
       console.log(_KEYS);
     });
   },

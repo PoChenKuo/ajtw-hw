@@ -14,14 +14,22 @@ export default new Vuex.Store({
     videoCapacity: 0,
     storedVideos: [],
     nextPageToken: "",
-    videoSurfingPage: 0
+    videoSurfingPage: 0,
+    likeList: [],
+    descriptionPopupEnable: false,
+    descriptionPopupContent: {
+      title: "",
+      description: ""
+    }
   },
   mutations: {
     currentPage(state, payload) {
       state.curPage = payload;
     },
     appendVideos(state, payload) {
-      state.storedVideos = [...state.storedVideos, ...payload];
+      const list = [...state.storedVideos, ...payload];
+      list.forEach((e, ind) => (e.vid = ind));
+      state.storedVideos = list;
     },
     updateNextPageToken(state, payload) {
       state.nextPageToken = payload;
@@ -31,6 +39,30 @@ export default new Vuex.Store({
     },
     updateVideoSurfingPage(state, payload) {
       state.videoSurfingPage = payload;
+    },
+    removeLike(state, payload) {
+      const list = state.likeList
+        .filter(e => e !== payload)
+        .sort((a, b) => (a < b ? 1 : -1));
+      state.likeList = list;
+    },
+    addLike(state, payload) {
+      const list = [...state.likeList, ...payload];
+      list.sort((a, b) => (a < b ? 1 : -1));
+      state.likeList = list;
+    },
+    updatePerference(state, payload) {
+      state.preference = Object.assign({}, state.preference, payload);
+    },
+    setDescriptionPopupEnable(state, payload) {
+      state.descriptionPopupEnable = payload;
+    },
+    updateDescriptionPopupContent(state, payload) {
+      state.descriptionPopupContent = Object.assign(
+        {},
+        state.descriptionPopupContent,
+        payload
+      );
     }
   },
   actions: {
@@ -48,6 +80,21 @@ export default new Vuex.Store({
     },
     updateVideoSurfingPage({ commit }, payload) {
       commit("updateVideoSurfingPage", payload);
+    },
+    removeLike({ commit }, payload) {
+      commit("removeLike", payload);
+    },
+    addLike({ commit }, payload) {
+      commit("addLike", payload);
+    },
+    updatePerference({ commit }, payload) {
+      commit("updatePerference", payload);
+    },
+    setDescriptionPopupEnable({ commit }, payload) {
+      commit("setDescriptionPopupEnable", payload);
+    },
+    updateDescriptionPopupContent({ commit }, payload) {
+      commit("updateDescriptionPopupContent", payload);
     }
   },
   modules: {}

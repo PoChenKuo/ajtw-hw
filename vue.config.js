@@ -12,11 +12,13 @@ module.exports = {
   },
 
   pwa: {
-    name: 'ajtw-hw',
-    themeColor: '#EF5C65',
-    manifestCrossorigin: 'anonymous',
+    name: "ajtw-hw",
+    themeColor: "#EF5C65",
+    manifestCrossorigin: "anonymous",
+    appleMobileWebAppCapable: "yes",
+    appleMobileWebAppStatusBarStyle: "black",
     manifestOptions: {
-      background_color: '#FFFFFF'
+      background_color: "#777"
     }
   }
 };

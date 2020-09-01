@@ -1,17 +1,18 @@
 <template>
   <div class="home">
     <!-- <div @click="fetchVideos(12)">load more</div> -->
-    <div class="list">
+    <transition-group tag="list" class="list" name="fade">
       <video-card
-        v-for="(item,ind) in videoList"
-        :key="ind"
+        v-for="item in videoList"
+        :key="item.vid"
         :code="item.code"
         :description="item.description"
         :title="item.title"
         :image="item.image"
         :duration="item.duration"
+        :like="item.like"
       />
-    </div>
+    </transition-group>
   </div>
 </template>
 
@@ -21,6 +22,7 @@ import { mapState, mapActions } from "vuex";
 import VideoCard from "@/components/VideoCard";
 import { ytAPI } from "@/youtubeDataAPI";
 import _KEYS from "@/keyword";
+import { getLikeAttachList } from "@/likeAttach";
 let _this = null;
 export default {
   name: "Home",
@@ -34,26 +36,40 @@ export default {
       "storedVideos",
       "nextPageToken",
       "videoCapacity",
-      "videoSurfingPage"
+      "videoSurfingPage",
+      "likeList"
     ]),
     videoList() {
-      const source = this.storedVideos;
-      return source.map(e => {
+      let source = [...this.storedVideos];
+      source = source.map(e => {
         const snippet = e.snippet;
+        let image = snippet.thumbnails;
+        image =
+          image.maxres ||
+          image.standard ||
+          image.height ||
+          image.medium ||
+          image.default;
         return {
           title: snippet.title,
           description: snippet.description,
           code: e.id,
-          image: snippet.thumbnails.default.url,
-          duration: e.contentDetails.duration
+          image: image.url,
+          duration: e.contentDetails.duration,
+          like: false,
+          vid: e.vid
         };
       });
+      const list = getLikeAttachList(this.likeList, source);
+      list.forEach(e => (e.like = true));
+      return source;
     }
   },
   mounted() {
     this.$nextTick(() => {
       _this = this;
       this.init();
+      // this.addLike(["PWmXREMAxl4"]);
     });
   },
   watch: {
@@ -66,41 +82,55 @@ export default {
       "appendVideos",
       "updateNextPageToken",
       "setVideoCapacity",
-      "updateVideoSurfingPage"
+      "updateVideoSurfingPage",
+      "removeLike",
+      "addLike"
     ]),
     init() {
       if (this.checkExistData() === 0) {
-        // this.fetchVideos(this.pageSize);
         this.updateVideoSurfingPage(1);
       }
     },
     fetchVideos(videoNum) {
-      ytAPI
-        .getListContent({
-          chart: this.preference.chart,
-          maxResults: videoNum,
-          regionCode: this.preference.regionCode,
-          pageToken: this.nextPageToken ? this.nextPageToken : ""
-        })
-        .then(res => res.json())
-        .then(data => {
-          if (data.items.length) {
-            _this.appendVideos(data.items);
-          }
-          data.nextPageToken && _this.updateNextPageToken(data.nextPageToken);
+      _this.youtubeVideoLoad(videoNum).then(data => {
+        _this.upDateVideoInfo(data);
+        data.nextPageToken && _this.updateNextPageToken(data.nextPageToken);
 
-          if (
-            data.pageInfo &&
-            data.pageInfo.totalResults &&
-            _this.videoCapacity === 0
-          ) {
-            const num =
-              data.pageInfo.totalResults <= 100
-                ? data.pageInfo.totalResults
-                : 100;
-            _this.setVideoCapacity(num);
-          }
-        });
+        if (!_this.checkVideoLoadingInitialStatus(data)) {
+          const num =
+            data.pageInfo.totalResults <= 100
+              ? data.pageInfo.totalResults
+              : 100;
+          _this.setVideoCapacity(num);
+        }
+      });
+    },
+    youtubeVideoLoad(videoNum) {
+      return new Promise(resolve => {
+        ytAPI
+          .getListContent({
+            chart: this.preference.chart,
+            maxResults: videoNum,
+            regionCode: this.preference.regionCode,
+            pageToken: this.nextPageToken ? this.nextPageToken : ""
+          })
+          .then(res => {
+            resolve(res.json());
+          });
+      });
+    },
+    checkVideoLoadingInitialStatus(data) {
+      return !(
+        data &&
+        data.pageInfo &&
+        data.pageInfo.totalResults &&
+        _this.videoCapacity === 0
+      );
+    },
+    upDateVideoInfo(data) {
+      if (data.items.length) {
+        _this.appendVideos(data.items);
+      }
     },
     checkExistData() {
       return Math.ceil((this.storedVideos.length * 1.0) / this.pageSize);
@@ -120,6 +150,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import "~@/scss/transition.scss";
+
 .page-home {
   .list {
     display: flex;

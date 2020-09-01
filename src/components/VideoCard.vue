@@ -6,21 +6,33 @@
       <div class="time">{{time}}</div>
       <div class="cover inner"></div>
     </div>
-    <div class="detail">
-      <div class="title">{{title}}</div>
+    <div class="detail" @click.stop="openDescription">
+      <div class="title">
+        {{title}}
+        <span class="like" :class="{active:like}" @click.stop="likeVideo(code, like)">
+          <font-awesome-icon :icon="heartIcon" />
+        </span>
+      </div>
       <div class="description">{{description}}</div>
     </div>
     <div class="cover outter"></div>
-    <div class="like"></div>
   </div>
 </template>
 
 <script>
+import { mapActions } from "vuex";
+import { faHeart as fasHeart } from "@fortawesome/free-solid-svg-icons";
 export default {
   name: "VideoCard",
-  props: ["duration", "title", "description", "image", "code"],
+  props: ["duration", "title", "description", "image", "code", "like"],
   data() {
-    return {};
+    return {
+      heartIcon: fasHeart
+    };
+  },
+  components: {
+    // eslint-disable-next-line vue/no-unused-components
+    fasHeart
   },
   mounted() {
     console.log(
@@ -46,7 +58,30 @@ export default {
         }
         str = str.substring(search.index + 1, str.length);
       } while (str.match(/(H|M|S)/));
-      return result.toLowerCase();
+      return result.replace(/(H|M)/g, ":").replace(/S/, "");
+    }
+  },
+  methods: {
+    ...mapActions([
+      "removeLike",
+      "addLike",
+      "setDescriptionPopupEnable",
+      "updateDescriptionPopupContent"
+    ]),
+    likeVideo(code, like) {
+      console.log(code, like);
+      if (like) {
+        this.removeLike(code);
+      } else {
+        this.addLike([code]);
+      }
+    },
+    openDescription() {
+      this.updateDescriptionPopupContent({
+        title: this.title,
+        description: this.description
+      });
+      this.setDescriptionPopupEnable(true);
     }
   }
 };
