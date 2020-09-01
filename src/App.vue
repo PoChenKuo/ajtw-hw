@@ -34,10 +34,15 @@ export default {
     }
   },
   computed: {
-    ...mapState(["curPage", "likeList", "updatePerference"])
+    ...mapState(["curPage", "likeList"])
   },
   methods: {
-    ...mapActions(["currentPage", "addLike", "setDescriptionPopupEnable"]),
+    ...mapActions([
+      "currentPage",
+      "addLike",
+      "setDescriptionPopupEnable",
+      "updatePerference"
+    ]),
     init() {
       if (!window.localStorage.perference) {
         window.localStorage.perference = JSON.stringify({

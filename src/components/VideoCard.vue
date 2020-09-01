@@ -34,15 +34,7 @@ export default {
     // eslint-disable-next-line vue/no-unused-components
     fasHeart
   },
-  mounted() {
-    console.log(
-      this.duration,
-      this.title,
-      this.description,
-      this.image,
-      this.code
-    );
-  },
+  mounted() {},
   computed: {
     time() {
       let result = "";

@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <!-- <div @click="fetchVideos(12)">load more</div> -->
-    <transition-group tag="list" class="list" name="fade">
+    <transition-group tag="div" class="list" name="fade" v-if="!isLoading">
       <video-card
         v-for="item in videoList"
         :key="item.vid"
@@ -13,7 +13,12 @@
         :like="item.like"
       />
     </transition-group>
-    <page-switch />
+    <page-switch v-if="!isLoading" />
+    <transition name="fade" v-if="isLoading">
+      <div class="loading-container">
+        <div class="loading"></div>
+      </div>
+    </transition>
   </div>
 </template>
 
@@ -31,7 +36,11 @@ export default {
   name: "Home",
   components: { VideoCard, PageSwitch },
   data() {
-    return { KEYWORD: _KEYS, pageSize: _KEYS.DEFAULT_VIDEO_LENGTH_PER_PAGE };
+    return {
+      KEYWORD: _KEYS,
+      pageSize: _KEYS.DEFAULT_VIDEO_LENGTH_PER_PAGE,
+      isLoading: true
+    };
   },
   computed: {
     ...mapState([
@@ -44,6 +53,17 @@ export default {
     ]),
     videoList() {
       let source = [...this.storedVideos];
+      source = source.filter(e => {
+        return (
+          e.vid >=
+            (_this.videoSurfingPage - 1) *
+              _this.KEYWORD.DEFAULT_VIDEO_LENGTH_PER_PAGE &&
+          e.vid <
+            _this.videoSurfingPage *
+              _this.KEYWORD.DEFAULT_VIDEO_LENGTH_PER_PAGE &&
+          e.vid < _this.videoCapacity
+        );
+      });
       source = source.map(e => {
         const snippet = e.snippet;
         let image = snippet.thumbnails;
@@ -72,7 +92,6 @@ export default {
     this.$nextTick(() => {
       _this = this;
       this.init();
-      // this.addLike(["PWmXREMAxl4"]);
     });
   },
   watch: {
@@ -96,15 +115,23 @@ export default {
     },
     fetchVideos(videoNum) {
       _this.youtubeVideoLoad(videoNum).then(data => {
+        const pageInfo = data.pageInfo;
         _this.upDateVideoInfo(data);
         data.nextPageToken && _this.updateNextPageToken(data.nextPageToken);
 
         if (!_this.checkVideoLoadingInitialStatus(data)) {
           const num =
-            data.pageInfo.totalResults <= _this.KEYWORD.MAXIMUM_VIDEO_SIZE
-              ? data.pageInfo.totalResults
+            pageInfo.totalResults <= _this.KEYWORD.MAXIMUM_VIDEO_SIZE
+              ? pageInfo.totalResults
               : _this.KEYWORD.MAXIMUM_VIDEO_SIZE;
           _this.setVideoCapacity(num);
+        }
+        if (pageInfo && pageInfo.resultsPerPage) {
+          if (pageInfo.resultsPerPage < videoNum) {
+            _this.fetchVideos(videoNum - pageInfo.resultsPerPage);
+          } else {
+            _this.isLoading = false;
+          }
         }
       });
     },
@@ -145,7 +172,10 @@ export default {
           ? target
           : this.videoCapacity;
       if (this.storedVideos.length < target) {
+        this.isLoading = true;
         this.fetchVideos(target - this.storedVideos.length);
+      } else {
+        this.isLoading = false;
       }
     }
   }
@@ -161,5 +191,20 @@ export default {
     justify-content: space-evenly;
     flex-wrap: wrap;
   }
+}
+
+.loading-container {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+}
+.loading {
+  background-image: url("~@/assets/load.svg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  width: 300px;
+  height: 300px;
 }
 </style>
