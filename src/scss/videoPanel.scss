@@ -1,0 +1,29 @@
+
+#app {
+  .list {
+    display: flex;
+    justify-content: space-evenly;
+    flex-wrap: wrap;
+  }
+}
+
+.loading-container {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+}
+.loading {
+  background-image: url("~@/assets/load.svg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  width: 300px;
+  height: 300px;
+}
+
+@media screen and (max-width: 1280px) {
+  .home-page-switch {
+    display: none;
+  }
+}

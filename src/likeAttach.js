@@ -1,4 +1,5 @@
-export const getLikeAttachList = function(likeList, dataArr) {
+export const getLikeAttachList = function(_likeList, dataArr) {
+  const likeList = [..._likeList].sort((a, b) => (a < b ? 1 : -1));
   const arr = [...dataArr].sort((a, b) => (a.code < b.code ? 1 : -1));
   const result = [];
   let indForLike = 0;

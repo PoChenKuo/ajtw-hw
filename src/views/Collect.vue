@@ -1,14 +1,171 @@
 <template>
   <div class="collect">
-    <h1>This is an about page</h1>
+    <!-- <div @click="fetchVideos(12)">load more</div> -->
+    <transition-group tag="div" class="list" name="fade" v-if="!isLoading">
+      <video-card
+        v-for="item in videoList"
+        :key="item.vid"
+        :code="item.code"
+        :description="item.description"
+        :title="item.title"
+        :image="item.image"
+        :duration="item.duration"
+        :like="item.like"
+      />
+      <div
+        class="video-card empty"
+        v-for="(item,ind) in Array(10)"
+        :key="KEYWORD.MAXIMUM_VIDEO_SIZE+ind+1"
+      ></div>
+    </transition-group>
+    <page-switch
+      v-if="!isLoading"
+      class="home-page-switch"
+      :videoSurfingPage="videoSurfingPage"
+      :videoCapacity="videoCapacity"
+      :updateVideoSurfingPage="updateVideoSurfingPage"
+    />
+    <transition name="fade" v-if="isLoading">
+      <div class="loading-container">
+        <div class="loading"></div>
+      </div>
+    </transition>
   </div>
 </template>
 
 <script>
+// @ is an alias to /src
+import { mapState, mapActions } from "vuex";
+import { ytAPI } from "@/youtubeDataAPI";
+
+import { getLikeAttachList } from "@/likeAttach";
+import VideoCard from "@/components/VideoCard";
+import VideoListMixin from "@/components/VideoListMixin";
+import PageSwitch from "@/components/PageSwitch";
+
+let _this = null;
 export default {
-  name: "Collect"
+  name: "Home",
+  components: { VideoCard, PageSwitch },
+  data() {
+    return {
+      isLoading: true
+    };
+  },
+  mixins: [VideoListMixin],
+  computed: {
+    ...mapState([
+      "preference",
+      "nextPageToken",
+      "videoCapacity",
+      "videoSurfingPage",
+      "likeList"
+    ]),
+    ...mapState({
+      videos: "storedVideos"
+    }),
+    targetVideos() {
+      return [...this.videos].filter(e => {
+        return (
+          e.vid >=
+            (_this.videoSurfingPage - 1) *
+              _this.KEYWORD.DEFAULT_VIDEO_LENGTH_PER_PAGE &&
+          e.vid <
+            _this.videoSurfingPage *
+              _this.KEYWORD.DEFAULT_VIDEO_LENGTH_PER_PAGE &&
+          e.vid < _this.videoCapacity
+        );
+      });
+    },
+    videoList() {
+      let source = [...this.targetVideos];
+      source = source.map(e => _this.getVideoCardFormat(e));
+      getLikeAttachList(this.likeList, source).forEach(e => (e.like = true));
+
+      return source;
+    }
+  },
+  mounted() {
+    this.$nextTick(() => {
+      _this = this;
+      this.init();
+    });
+  },
+  watch: {
+    videoSurfingPage(nv, ov) {
+      this.pageChange(nv);
+    }
+  },
+  methods: {
+    ...mapActions([
+      "appendVideos",
+      "updateNextPageToken",
+      "setVideoCapacity",
+      "updateVideoSurfingPage"
+    ]),
+    init() {
+      if (this.checkExistData() === 0) {
+        this.updateVideoSurfingPage(1);
+      } else {
+        this.isLoading = false;
+      }
+    },
+    fetchVideos(videoNum) {
+      _this.youtubeVideoLoad(videoNum).then(data => {
+        const pageInfo = data.pageInfo;
+        _this.upDateVideoInfo(data);
+        data.nextPageToken && _this.updateNextPageToken(data.nextPageToken);
+
+        if (!_this.checkVideoLoadingInitialStatus(data)) {
+          _this.initVideoCaptacity(pageInfo);
+        }
+        _this.videoCollectingHandle(pageInfo, videoNum);
+      });
+    },
+    videoCollectingHandle(pageInfo, videoNum) {
+      if (pageInfo && pageInfo.resultsPerPage) {
+        if (pageInfo.resultsPerPage < videoNum) {
+          _this.fetchVideos(videoNum - pageInfo.resultsPerPage);
+        } else {
+          _this.isLoading = false;
+        }
+      }
+    },
+    initVideoCaptacity(pageInfo) {
+      const num =
+        pageInfo.totalResults <= _this.KEYWORD.MAXIMUM_VIDEO_SIZE
+          ? pageInfo.totalResults
+          : _this.KEYWORD.MAXIMUM_VIDEO_SIZE;
+      _this.setVideoCapacity(num);
+    },
+    youtubeVideoLoad(videoNum) {
+      return new Promise(resolve => {
+        ytAPI
+          .getListContent({
+            chart: this.preference.chart,
+            maxResults: videoNum,
+            regionCode: this.preference.regionCode,
+            pageToken: this.nextPageToken ? this.nextPageToken : ""
+          })
+          .then(res => {
+            resolve(res.json());
+          });
+      });
+    },
+    upDateVideoInfo(data) {
+      if (data.items.length) {
+        _this.appendVideos(data.items);
+      }
+    },
+    checkExistData() {
+      return Math.ceil((this.videos.length * 1.0) / this.pageSize);
+    }
+  }
 };
 </script>
 
-<style>
+<style lang="scss" scoped>
+@import "~@/scss/transition.scss";
+@import "~@/scss/videoPanel";
+@import "~@/scss/videoCard";
 </style>

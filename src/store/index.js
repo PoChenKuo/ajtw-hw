@@ -10,6 +10,10 @@ export default new Vuex.Store({
       chart: "mostPopular",
       regionCode: "TW"
     },
+    likeVideoStore: {
+      videos: {},
+      currentPage: 1
+    },
     videoCapacity: 0,
     storedVideos: [],
     nextPageToken: "",
@@ -40,14 +44,11 @@ export default new Vuex.Store({
       state.videoSurfingPage = payload;
     },
     removeLike(state, payload) {
-      const list = state.likeList
-        .filter(e => e !== payload)
-        .sort((a, b) => (a < b ? 1 : -1));
+      const list = state.likeList.filter(e => e !== payload);
       state.likeList = list;
     },
     addLike(state, payload) {
       const list = [...state.likeList, ...payload];
-      list.sort((a, b) => (a < b ? 1 : -1));
       state.likeList = list;
     },
     updatePerference(state, payload) {

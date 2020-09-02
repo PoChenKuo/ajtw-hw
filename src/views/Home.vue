@@ -40,32 +40,32 @@ import { ytAPI } from "@/youtubeDataAPI";
 
 import { getLikeAttachList } from "@/likeAttach";
 import VideoCard from "@/components/VideoCard";
+import VideoListMixin from "@/components/VideoListMixin";
 import PageSwitch from "@/components/PageSwitch";
-import _KEYS from "@/keyword";
+
 let _this = null;
 export default {
   name: "Home",
   components: { VideoCard, PageSwitch },
   data() {
     return {
-      KEYWORD: _KEYS,
-      pageSize: _KEYS.DEFAULT_VIDEO_LENGTH_PER_PAGE,
       isLoading: true
     };
   },
+  mixins: [VideoListMixin],
   computed: {
     ...mapState([
       "preference",
-      "storedVideos",
       "nextPageToken",
       "videoCapacity",
       "videoSurfingPage",
       "likeList"
     ]),
-    videoList() {
-      let source = [...this.storedVideos];
-
-      source = source.filter(e => {
+    ...mapState({
+      videos: "storedVideos"
+    }),
+    targetVideos() {
+      return [...this.videos].filter(e => {
         return (
           e.vid >=
             (_this.videoSurfingPage - 1) *
@@ -76,25 +76,10 @@ export default {
           e.vid < _this.videoCapacity
         );
       });
-      source = source.map(e => {
-        const snippet = e.snippet;
-        let image = snippet.thumbnails;
-        image =
-          image.maxres ||
-          image.standard ||
-          image.height ||
-          image.medium ||
-          image.default;
-        return {
-          title: snippet.title,
-          description: snippet.description,
-          code: e.id,
-          image: image.url,
-          duration: e.contentDetails.duration,
-          like: false,
-          vid: e.vid
-        };
-      });
+    },
+    videoList() {
+      let source = [...this.targetVideos];
+      source = source.map(e => _this.getVideoCardFormat(e));
       getLikeAttachList(this.likeList, source).forEach(e => (e.like = true));
 
       return source;
@@ -116,9 +101,7 @@ export default {
       "appendVideos",
       "updateNextPageToken",
       "setVideoCapacity",
-      "updateVideoSurfingPage",
-      "removeLike",
-      "addLike"
+      "updateVideoSurfingPage"
     ]),
     init() {
       if (this.checkExistData() === 0) {
@@ -134,20 +117,26 @@ export default {
         data.nextPageToken && _this.updateNextPageToken(data.nextPageToken);
 
         if (!_this.checkVideoLoadingInitialStatus(data)) {
-          const num =
-            pageInfo.totalResults <= _this.KEYWORD.MAXIMUM_VIDEO_SIZE
-              ? pageInfo.totalResults
-              : _this.KEYWORD.MAXIMUM_VIDEO_SIZE;
-          _this.setVideoCapacity(num);
+          _this.initVideoCaptacity(pageInfo);
         }
-        if (pageInfo && pageInfo.resultsPerPage) {
-          if (pageInfo.resultsPerPage < videoNum) {
-            _this.fetchVideos(videoNum - pageInfo.resultsPerPage);
-          } else {
-            _this.isLoading = false;
-          }
-        }
+        _this.videoCollectingHandle(pageInfo, videoNum);
       });
+    },
+    videoCollectingHandle(pageInfo, videoNum) {
+      if (pageInfo && pageInfo.resultsPerPage) {
+        if (pageInfo.resultsPerPage < videoNum) {
+          _this.fetchVideos(videoNum - pageInfo.resultsPerPage);
+        } else {
+          _this.isLoading = false;
+        }
+      }
+    },
+    initVideoCaptacity(pageInfo) {
+      const num =
+        pageInfo.totalResults <= _this.KEYWORD.MAXIMUM_VIDEO_SIZE
+          ? pageInfo.totalResults
+          : _this.KEYWORD.MAXIMUM_VIDEO_SIZE;
+      _this.setVideoCapacity(num);
     },
     youtubeVideoLoad(videoNum) {
       return new Promise(resolve => {
@@ -163,34 +152,13 @@ export default {
           });
       });
     },
-    checkVideoLoadingInitialStatus(data) {
-      return !(
-        data &&
-        data.pageInfo &&
-        data.pageInfo.totalResults &&
-        _this.videoCapacity === 0
-      );
-    },
     upDateVideoInfo(data) {
       if (data.items.length) {
         _this.appendVideos(data.items);
       }
     },
     checkExistData() {
-      return Math.ceil((this.storedVideos.length * 1.0) / this.pageSize);
-    },
-    pageChange(pageNum) {
-      let target = pageNum * this.pageSize;
-      target =
-        target <= this.videoCapacity || !this.videoCapacity
-          ? target
-          : this.videoCapacity;
-      if (this.storedVideos.length < target) {
-        this.isLoading = true;
-        this.fetchVideos(target - this.storedVideos.length);
-      } else {
-        this.isLoading = false;
-      }
+      return Math.ceil((this.videos.length * 1.0) / this.pageSize);
     }
   }
 };
@@ -198,34 +166,6 @@ export default {
 
 <style lang="scss" scoped>
 @import "~@/scss/transition.scss";
+@import "~@/scss/videoPanel";
 @import "~@/scss/videoCard";
-
-.page-home {
-  .list {
-    display: flex;
-    justify-content: space-evenly;
-    flex-wrap: wrap;
-  }
-}
-
-.loading-container {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-evenly;
-}
-.loading {
-  background-image: url("~@/assets/load.svg");
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: cover;
-  width: 300px;
-  height: 300px;
-}
-
-@media screen and (max-width: 1280px) {
-  .home-page-switch {
-    display: none;
-  }
-}
 </style>
