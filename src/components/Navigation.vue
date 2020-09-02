@@ -2,7 +2,7 @@
   <div class="navigation">
     <span
       class="option-item home"
-      @click="$router.push('/')"
+      @click="$route.path!=='/'&&$router.push('/')"
       :class="{active:curPage===KEYWORD.PAGE_KEY_HOME}"
     >
       <font-awesome-icon :icon="fasTv" />
@@ -11,7 +11,7 @@
 
     <span
       class="option-item favorite"
-      @click="$router.push('/collect')"
+      @click="$route.path!=='/collect'&&$router.push('/collect')"
       :class="{active:curPage===KEYWORD.PAGE_KEY_COLLECT}"
     >
       <font-awesome-icon :icon="fasBookmark" />
@@ -65,7 +65,7 @@ export default {
   },
   mounted() {
     this.$nextTick(() => {
-      console.log(_KEYS);
+      console.log(this);
     });
   },
   computed: {},

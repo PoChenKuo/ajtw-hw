@@ -56,10 +56,10 @@ import {
   faAngleDoubleRight
 } from "@fortawesome/free-solid-svg-icons";
 import _KEYS from "@/keyword";
-import { mapState, mapActions } from "vuex";
+// import { mapState, mapActions } from "vuex";
 export default {
   name: "PageSwitch",
-  props: [],
+  props: ["videoSurfingPage", "videoCapacity", "updateVideoSurfingPage"],
   components: {
     // eslint-disable-next-line vue/no-unused-components
     faAngleLeft,
@@ -71,7 +71,7 @@ export default {
     faAngleDoubleRight
   },
   computed: {
-    ...mapState(["videoSurfingPage", "videoCapacity"]),
+    // ...mapState(["videoSurfingPage", "videoCapacity"]),
     endPageNumber() {
       return Math.ceil(
         (this.videoCapacity * 1.0) / this.KEYWORD.DEFAULT_VIDEO_LENGTH_PER_PAGE
@@ -122,7 +122,7 @@ export default {
     };
   },
   methods: {
-    ...mapActions(["updateVideoSurfingPage"])
+    // ...mapActions(["updateVideoSurfingPage"])
   }
 };
 </script>

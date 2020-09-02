@@ -12,8 +12,19 @@
         :duration="item.duration"
         :like="item.like"
       />
+      <div
+        class="video-card empty"
+        v-for="(item,ind) in Array(10)"
+        :key="KEYWORD.MAXIMUM_VIDEO_SIZE+ind+1"
+      ></div>
     </transition-group>
-    <page-switch v-if="!isLoading" />
+    <page-switch
+      v-if="!isLoading"
+      class="home-page-switch"
+      :videoSurfingPage="videoSurfingPage"
+      :videoCapacity="videoCapacity"
+      :updateVideoSurfingPage="updateVideoSurfingPage"
+    />
     <transition name="fade" v-if="isLoading">
       <div class="loading-container">
         <div class="loading"></div>
@@ -53,6 +64,7 @@ export default {
     ]),
     videoList() {
       let source = [...this.storedVideos];
+
       source = source.filter(e => {
         return (
           e.vid >=
@@ -83,8 +95,8 @@ export default {
           vid: e.vid
         };
       });
-      const list = getLikeAttachList(this.likeList, source);
-      list.forEach(e => (e.like = true));
+      getLikeAttachList(this.likeList, source).forEach(e => (e.like = true));
+
       return source;
     }
   },
@@ -111,6 +123,8 @@ export default {
     init() {
       if (this.checkExistData() === 0) {
         this.updateVideoSurfingPage(1);
+      } else {
+        this.isLoading = false;
       }
     },
     fetchVideos(videoNum) {
@@ -184,6 +198,7 @@ export default {
 
 <style lang="scss" scoped>
 @import "~@/scss/transition.scss";
+@import "~@/scss/videoCard";
 
 .page-home {
   .list {
@@ -206,5 +221,11 @@ export default {
   background-size: cover;
   width: 300px;
   height: 300px;
+}
+
+@media screen and (max-width: 1280px) {
+  .home-page-switch {
+    display: none;
+  }
 }
 </style>

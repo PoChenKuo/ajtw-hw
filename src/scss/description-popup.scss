@@ -17,7 +17,7 @@
 .description-popup {
   z-index: 7;
   position: fixed;
-  bottom: 1.5em;
+  bottom: 3.5em;
   width: calc(100vw - 30px);
   left: 15px;
   padding: 20px 10px;
@@ -56,7 +56,7 @@
 @media screen and (min-width: 1281px) {
   .description-popup {
     left: 280px;
-    bottom: 2.5em;
+    bottom: 3em;
     width: calc(80vw - 300px);
     margin-left: 10vw;
     padding: 20px 30px;
