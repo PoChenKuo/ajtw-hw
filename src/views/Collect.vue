@@ -1,55 +1,29 @@
 <template>
-  <div class="collect">
-    <!-- <div @click="fetchVideos(12)">load more</div> -->
-    <transition-group tag="div" class="list" name="fade" v-if="!isLoading">
-      <video-card
-        v-for="item in videoList"
-        :key="item.vid"
-        :code="item.code"
-        :description="item.description"
-        :title="item.title"
-        :image="item.image"
-        :duration="item.duration"
-        :like="item.like"
-      />
-      <div
-        class="video-card empty"
-        v-for="(item,ind) in Array(10)"
-        :key="KEYWORD.MAXIMUM_VIDEO_SIZE+ind+1"
-      ></div>
-    </transition-group>
-    <page-switch
-      v-if="!isLoading"
-      class="home-page-switch"
-      :videoSurfingPage="videoSurfingPage"
-      :videoCapacity="videoCapacity"
-      :updateVideoSurfingPage="updateVideoSurfingPage"
-    />
-    <transition name="fade" v-if="isLoading">
-      <div class="loading-container">
-        <div class="loading"></div>
-      </div>
-    </transition>
-  </div>
+  <video-panel
+    class="collect"
+    :isLoading="isLoading"
+    :videoSurfingPage="videoSurfingPage"
+    :videoCapacity="videoCapacity"
+    :updateVideoSurfingPage="updateVideoSurfingPage"
+    :videoList="videoList"
+  />
 </template>
 
 <script>
-// @ is an alias to /src
 import { mapState, mapActions } from "vuex";
 import { ytAPI } from "@/youtubeDataAPI";
-
 import { getLikeAttachList } from "@/likeAttach";
-import VideoCard from "@/components/VideoCard";
+import VideoPanel from "@/components/VideoPanel";
 import VideoListMixin from "@/components/VideoListMixin";
-import PageSwitch from "@/components/PageSwitch";
 
 let _this = null;
 export default {
-  name: "Home",
-  components: { VideoCard, PageSwitch },
+  name: "Collect",
+  components: { VideoPanel },
   data() {
     return {
-      isLoading: true
+      isLoading: true,
+      videos: []
     };
   },
   mixins: [VideoListMixin],
@@ -61,9 +35,6 @@ export default {
       "videoSurfingPage",
       "likeList"
     ]),
-    ...mapState({
-      videos: "storedVideos"
-    }),
     targetVideos() {
       return [...this.videos].filter(e => {
         return (
@@ -105,7 +76,7 @@ export default {
     ]),
     init() {
       if (this.checkExistData() === 0) {
-        this.updateVideoSurfingPage(1);
+        // this.updateVideoSurfingPage(1);
       } else {
         this.isLoading = false;
       }
@@ -165,7 +136,4 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import "~@/scss/transition.scss";
-@import "~@/scss/videoPanel";
-@import "~@/scss/videoCard";
 </style>

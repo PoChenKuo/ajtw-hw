@@ -1,6 +1,10 @@
 <template>
   <div class="page-switch">
-    <span class="grid-button" @click="!isBegin && updateVideoSurfingPage(1)">
+    <span
+      class="grid-button"
+      @click="!isBegin && updateVideoSurfingPage(1)"
+      :class="{disabled:!prevOnePage.active}"
+    >
       <font-awesome-icon :icon="faAngleDoubleLeft" :class="{disabled:isBegin}" />
     </span>
     <span

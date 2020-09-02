@@ -10,10 +10,8 @@
 </template>
 
 <script>
-// @ is an alias to /src
 import { mapState, mapActions } from "vuex";
 import { ytAPI } from "@/youtubeDataAPI";
-
 import { getLikeAttachList } from "@/likeAttach";
 import VideoPanel from "@/components/VideoPanel";
 import VideoListMixin from "@/components/VideoListMixin";
