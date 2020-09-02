@@ -8,7 +8,8 @@ export default new Vuex.Store({
     curPage: "",
     preference: {
       chart: "mostPopular",
-      regionCode: "TW"
+      regionCode: "TW",
+      videoCategoryId: "0"
     },
     likeVideoSurfuringPage: 1,
     videoCapacity: 0,
@@ -17,6 +18,7 @@ export default new Vuex.Store({
     videoSurfingPage: 0,
     likeList: [],
     descriptionPopupEnable: false,
+    preferencePopupEnable: false,
     descriptionPopupContent: {
       title: "",
       description: ""
@@ -57,6 +59,9 @@ export default new Vuex.Store({
     setDescriptionPopupEnable(state, payload) {
       state.descriptionPopupEnable = payload;
     },
+    setPerferencePopupEnable(state, payload) {
+      state.preferencePopupEnable = payload;
+    },
     updateDescriptionPopupContent(state, payload) {
       state.descriptionPopupContent = Object.assign(
         {},
@@ -95,6 +100,9 @@ export default new Vuex.Store({
     },
     setDescriptionPopupEnable({ commit }, payload) {
       commit("setDescriptionPopupEnable", payload);
+    },
+    setPerferencePopupEnable({ commit }, payload) {
+      commit("setPerferencePopupEnable", payload);
     },
     updateDescriptionPopupContent({ commit }, payload) {
       commit("updateDescriptionPopupContent", payload);

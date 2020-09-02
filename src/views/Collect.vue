@@ -72,23 +72,28 @@ export default {
         this.likes.length / this.KEYWORD.DEFAULT_VIDEO_LENGTH_PER_PAGE
       );
       if (this.videoSurfingPage > maxPageNumber) {
-        this.updateVideoSurfingPage(1);
+        if (maxPageNumber > 0) this.updateVideoSurfingPage(1);
+        else this.isLoading = false;
       } else {
         this.fetchVideos();
       }
     },
     fetchVideos() {
-      _this.youtubeVideoLoad().then(data => {
-        const items = data.items;
-        items.forEach((entry, ind) => {
-          entry.vid =
-            (_this.videoSurfingPage - 1) *
-              this.KEYWORD.DEFAULT_VIDEO_LENGTH_PER_PAGE +
-            ind;
+      if (this.targetVideoList.length > 0) {
+        _this.youtubeVideoLoad().then(data => {
+          const items = data.items;
+          items.forEach((entry, ind) => {
+            entry.vid =
+              (_this.videoSurfingPage - 1) *
+                this.KEYWORD.DEFAULT_VIDEO_LENGTH_PER_PAGE +
+              ind;
+          });
+          _this.videos = items;
+          _this.isLoading = false;
         });
-        _this.videos = items;
-        _this.isLoading = false;
-      });
+      } else {
+        this.isLoading = false;
+      }
     },
     youtubeVideoLoad() {
       return new Promise(resolve => {
@@ -97,7 +102,7 @@ export default {
             id: _this.targetVideoList
           })
           .then(res => {
-            resolve(res.json());
+            resolve(res);
           });
       });
     },

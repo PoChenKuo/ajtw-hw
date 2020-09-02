@@ -111,9 +111,12 @@ export default {
   methods: {
     ...mapActions({
       updateHomeVideoSurfingPage: "updateVideoSurfingPage",
-      updateLikeVideoSurfingPage: "updateLikeVideoSurfingPage"
+      updateLikeVideoSurfingPage: "updateLikeVideoSurfingPage",
+      setPerferencePopupEnable: "setPerferencePopupEnable"
     }),
-    openSetting() {}
+    openSetting() {
+      this.setPerferencePopupEnable(true);
+    }
   }
 };
 </script>
@@ -121,5 +124,4 @@ export default {
 <style lang="scss" scoped>
 @import "~@/scss/navigation.scss";
 @import "~@/scss/transition.scss";
-
 </style>

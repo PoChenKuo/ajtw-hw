@@ -5,15 +5,17 @@
     </transition>
     <navigation :cur-page="curPage" :class="{scrollDown:mouseWheelDown}" />
     <description-popup />
+    <preference-popup />
   </div>
 </template>
 <script>
 import { mapState, mapActions } from "vuex";
 import Navigation from "@/components/Navigation";
+import PreferencePopup from "@/components/PreferencePopup";
 import DescriptionPopup from "@/components/DescriptionPopup";
 export default {
   name: "App",
-  components: { Navigation, DescriptionPopup },
+  components: { Navigation, DescriptionPopup, PreferencePopup },
   data() {
     return {
       mouseWheelDown: false
@@ -51,7 +53,7 @@ export default {
         });
       }
       this.currentPage((this.$route.name || "").toLowerCase());
-      this.addLike(JSON.parse(window.localStorage.like));
+      this.addLike(JSON.parse(window.localStorage.like || "[]"));
       this.updatePerference(JSON.parse(window.localStorage.perference));
     },
     middleMousedown(event) {

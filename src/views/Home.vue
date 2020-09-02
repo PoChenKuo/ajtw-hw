@@ -121,7 +121,7 @@ export default {
             pageToken: this.nextPageToken ? this.nextPageToken : ""
           })
           .then(res => {
-            resolve(res.json());
+            resolve(res);
           });
       });
     },

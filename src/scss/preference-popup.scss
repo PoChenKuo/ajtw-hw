@@ -1,0 +1,67 @@
+.preference-popup-overlay {
+  z-index: 8;
+  width: 100vw;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.3);
+  position: fixed;
+  top: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  .overlay-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+}
+.preference-popup {
+  z-index: 9;
+  position: relative;
+  bottom: 3.5em;
+  width: 330px;
+  left: 15px;
+  padding: 20px 10px;
+  box-sizing: border-box;
+  background-color: #fff;
+  min-height: 50px;
+  max-height: 80vh;
+  border-radius: 10px;
+  box-shadow: 0px -1px 6px rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  .close-icon {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    color: #000;
+    cursor: pointer;
+  }
+  .context {
+    max-height: 300px;
+    height: auto;
+    overflow: auto;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+  }
+  .apply-btn {
+    margin-top: 20px;
+    background-color: #aaaaff;
+    cursor: pointer;
+    color: #fff;
+    height: 2em;
+    width: 150px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 30px;
+    &:hover {
+      background-color: #6666ff;
+    }
+  }
+}
