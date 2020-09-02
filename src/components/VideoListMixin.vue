@@ -3,7 +3,7 @@
 import _KEYS from "@/keyword";
 
 export default {
-  name: "VideoPanel",
+  name: "VideoListMixin",
   data() {
     return {
       KEYWORD: _KEYS,

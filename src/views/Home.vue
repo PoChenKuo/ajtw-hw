@@ -1,36 +1,12 @@
 <template>
-  <div class="home">
-    <!-- <div @click="fetchVideos(12)">load more</div> -->
-    <transition-group tag="div" class="list" name="fade" v-if="!isLoading">
-      <video-card
-        v-for="item in videoList"
-        :key="item.vid"
-        :code="item.code"
-        :description="item.description"
-        :title="item.title"
-        :image="item.image"
-        :duration="item.duration"
-        :like="item.like"
-      />
-      <div
-        class="video-card empty"
-        v-for="(item,ind) in Array(10)"
-        :key="KEYWORD.MAXIMUM_VIDEO_SIZE+ind+1"
-      ></div>
-    </transition-group>
-    <page-switch
-      v-if="!isLoading"
-      class="home-page-switch"
-      :videoSurfingPage="videoSurfingPage"
-      :videoCapacity="videoCapacity"
-      :updateVideoSurfingPage="updateVideoSurfingPage"
-    />
-    <transition name="fade" v-if="isLoading">
-      <div class="loading-container">
-        <div class="loading"></div>
-      </div>
-    </transition>
-  </div>
+  <video-panel
+    class="home"
+    :isLoading="isLoading"
+    :videoSurfingPage="videoSurfingPage"
+    :videoCapacity="videoCapacity"
+    :updateVideoSurfingPage="updateVideoSurfingPage"
+    :videoList="videoList"
+  />
 </template>
 
 <script>
@@ -39,14 +15,13 @@ import { mapState, mapActions } from "vuex";
 import { ytAPI } from "@/youtubeDataAPI";
 
 import { getLikeAttachList } from "@/likeAttach";
-import VideoCard from "@/components/VideoCard";
+import VideoPanel from "@/components/VideoPanel";
 import VideoListMixin from "@/components/VideoListMixin";
-import PageSwitch from "@/components/PageSwitch";
 
 let _this = null;
 export default {
   name: "Home",
-  components: { VideoCard, PageSwitch },
+  components: { VideoPanel },
   data() {
     return {
       isLoading: true
@@ -165,7 +140,4 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import "~@/scss/transition.scss";
-@import "~@/scss/videoPanel";
-@import "~@/scss/videoCard";
 </style>
