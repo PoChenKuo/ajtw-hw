@@ -18,7 +18,11 @@
       <span>Favorite</span>
     </span>
 
-    <span class="option-item page" @click="pageSwitch = !pageSwitch" :class="{active:pageSwitch}">
+    <span
+      class="option-item page"
+      @click="pageSwitchEnable = !pageSwitchEnable"
+      :class="{active:pageSwitchEnable}"
+    >
       <font-awesome-icon :icon="fasSwatchbook" />
       <span>Page</span>
     </span>
@@ -27,11 +31,20 @@
       <font-awesome-icon :icon="fasCogs" />
       <span>Setting</span>
     </span>
+    <transition name="fadeTop">
+      <div class="page-switch-panel" v-if="pageSwitchEnable">
+        <page-switch
+          :videoSurfingPage="videoSurfingPage"
+          :videoCapacity="videoCapacity"
+          :updateVideoSurfingPage="updateVideoSurfingPage"
+        />
+      </div>
+    </transition>
   </div>
 </template>
 
 <script>
-// import { mapState } from "vuex";
+import { mapState, mapActions } from "vuex";
 import _KEYS from "@/keyword";
 import {
   faTv as fasTv,
@@ -39,10 +52,12 @@ import {
   faCogs as fasCogs,
   faSwatchbook as fasSwatchbook
 } from "@fortawesome/free-solid-svg-icons";
-// let _this = null;
+import PageSwitch from "@/components/PageSwitch";
+
 export default {
   name: "Navigation",
   components: {
+    PageSwitch,
     // eslint-disable-next-line vue/no-unused-components
     fasTv,
     // eslint-disable-next-line vue/no-unused-components
@@ -55,7 +70,7 @@ export default {
   props: ["curPage"],
   data() {
     return {
-      pageSwitch: false,
+      pageSwitchEnable: false,
       fasTv: fasTv,
       fasBookmark: fasBookmark,
       fasCogs: fasCogs,
@@ -64,12 +79,40 @@ export default {
     };
   },
   mounted() {
-    this.$nextTick(() => {
-      console.log(this);
-    });
+    this.$nextTick(() => {});
   },
-  computed: {},
+  computed: {
+    ...mapState({
+      likeList: "likeList",
+      homeVideoSurfingPage: "videoSurfingPage",
+      likeVideoSurfuringPage: "likeVideoSurfuringPage"
+    }),
+    isHome() {
+      return this.curPage === "home";
+    },
+    videoSurfingPage() {
+      return this.isHome
+        ? this.homeVideoSurfingPage
+        : this.likeVideoSurfuringPage;
+    },
+
+    updateVideoSurfingPage() {
+      return this.isHome
+        ? this.updateHomeVideoSurfingPage
+        : this.updateLikeVideoSurfingPage;
+    },
+
+    videoCapacity() {
+      return this.isHome
+        ? this.KEYWORD.MAXIMUM_VIDEO_SIZE
+        : this.likeList.length;
+    }
+  },
   methods: {
+    ...mapActions({
+      updateHomeVideoSurfingPage: "updateVideoSurfingPage",
+      updateLikeVideoSurfingPage: "updateLikeVideoSurfingPage"
+    }),
     openSetting() {}
   }
 };
@@ -77,4 +120,6 @@ export default {
 
 <style lang="scss" scoped>
 @import "~@/scss/navigation.scss";
+@import "~@/scss/transition.scss";
+
 </style>

@@ -86,7 +86,7 @@ export default {
     fetchVideos(videoNum) {
       _this.youtubeVideoLoad(videoNum).then(data => {
         const pageInfo = data.pageInfo;
-        _this.upDateVideoInfo(data);
+        _this.updateVideoInfo(data);
         data.nextPageToken && _this.updateNextPageToken(data.nextPageToken);
 
         if (!_this.checkVideoLoadingInitialStatus(data)) {
@@ -125,7 +125,7 @@ export default {
           });
       });
     },
-    upDateVideoInfo(data) {
+    updateVideoInfo(data) {
       if (data.items.length) {
         _this.appendVideos(data.items);
       }

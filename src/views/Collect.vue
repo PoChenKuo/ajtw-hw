@@ -3,7 +3,7 @@
     class="collect"
     :isLoading="isLoading"
     :videoSurfingPage="videoSurfingPage"
-    :videoCapacity="videoCapacity"
+    :videoCapacity="likes.length"
     :updateVideoSurfingPage="updateVideoSurfingPage"
     :videoList="videoList"
   />
@@ -23,33 +23,27 @@ export default {
   data() {
     return {
       isLoading: true,
-      videos: []
+      videos: [],
+
+      likes: []
     };
   },
   mixins: [VideoListMixin],
   computed: {
-    ...mapState([
-      "preference",
-      "nextPageToken",
-      "videoCapacity",
-      "videoSurfingPage",
-      "likeList"
-    ]),
-    targetVideos() {
-      return [...this.videos].filter(e => {
-        return (
-          e.vid >=
-            (_this.videoSurfingPage - 1) *
-              _this.KEYWORD.DEFAULT_VIDEO_LENGTH_PER_PAGE &&
-          e.vid <
-            _this.videoSurfingPage *
-              _this.KEYWORD.DEFAULT_VIDEO_LENGTH_PER_PAGE &&
-          e.vid < _this.videoCapacity
-        );
-      });
+    ...mapState(["likeList"]),
+    ...mapState({
+      videoSurfingPage: "likeVideoSurfuringPage"
+    }),
+    targetVideoList() {
+      const startInd =
+        (this.videoSurfingPage - 1) *
+        this.KEYWORD.DEFAULT_VIDEO_LENGTH_PER_PAGE;
+      const endInd = startInd + this.KEYWORD.DEFAULT_VIDEO_LENGTH_PER_PAGE;
+      return this.likes.slice(startInd, endInd).join(",");
     },
+
     videoList() {
-      let source = [...this.targetVideos];
+      let source = [...this.videos];
       source = source.map(e => _this.getVideoCardFormat(e));
       getLikeAttachList(this.likeList, source).forEach(e => (e.like = true));
 
@@ -64,70 +58,50 @@ export default {
   },
   watch: {
     videoSurfingPage(nv, ov) {
-      this.pageChange(nv);
+      nv && this.fetchVideos();
     }
   },
   methods: {
-    ...mapActions([
-      "appendVideos",
-      "updateNextPageToken",
-      "setVideoCapacity",
-      "updateVideoSurfingPage"
-    ]),
+    ...mapActions(["updateNextPageToken", "setVideoCapacity"]),
+    ...mapActions({
+      updateVideoSurfingPage: "updateLikeVideoSurfingPage"
+    }),
     init() {
-      if (this.checkExistData() === 0) {
-        // this.updateVideoSurfingPage(1);
+      this.likes = [...this.likeList];
+      const maxPageNumber = Math.ceil(
+        this.likes.length / this.KEYWORD.DEFAULT_VIDEO_LENGTH_PER_PAGE
+      );
+      if (this.videoSurfingPage > maxPageNumber) {
+        this.updateVideoSurfingPage(1);
       } else {
-        this.isLoading = false;
+        this.fetchVideos();
       }
     },
-    fetchVideos(videoNum) {
-      _this.youtubeVideoLoad(videoNum).then(data => {
-        const pageInfo = data.pageInfo;
-        _this.upDateVideoInfo(data);
-        data.nextPageToken && _this.updateNextPageToken(data.nextPageToken);
-
-        if (!_this.checkVideoLoadingInitialStatus(data)) {
-          _this.initVideoCaptacity(pageInfo);
-        }
-        _this.videoCollectingHandle(pageInfo, videoNum);
+    fetchVideos() {
+      _this.youtubeVideoLoad().then(data => {
+        const items = data.items;
+        items.forEach((entry, ind) => {
+          entry.vid =
+            (_this.videoSurfingPage - 1) *
+              this.KEYWORD.DEFAULT_VIDEO_LENGTH_PER_PAGE +
+            ind;
+        });
+        _this.videos = items;
+        _this.isLoading = false;
       });
     },
-    videoCollectingHandle(pageInfo, videoNum) {
-      if (pageInfo && pageInfo.resultsPerPage) {
-        if (pageInfo.resultsPerPage < videoNum) {
-          _this.fetchVideos(videoNum - pageInfo.resultsPerPage);
-        } else {
-          _this.isLoading = false;
-        }
-      }
-    },
-    initVideoCaptacity(pageInfo) {
-      const num =
-        pageInfo.totalResults <= _this.KEYWORD.MAXIMUM_VIDEO_SIZE
-          ? pageInfo.totalResults
-          : _this.KEYWORD.MAXIMUM_VIDEO_SIZE;
-      _this.setVideoCapacity(num);
-    },
-    youtubeVideoLoad(videoNum) {
+    youtubeVideoLoad() {
       return new Promise(resolve => {
         ytAPI
           .getListContent({
-            chart: this.preference.chart,
-            maxResults: videoNum,
-            regionCode: this.preference.regionCode,
-            pageToken: this.nextPageToken ? this.nextPageToken : ""
+            id: _this.targetVideoList
           })
           .then(res => {
             resolve(res.json());
           });
       });
     },
-    upDateVideoInfo(data) {
-      if (data.items.length) {
-        _this.appendVideos(data.items);
-      }
-    },
+
     checkExistData() {
       return Math.ceil((this.videos.length * 1.0) / this.pageSize);
     }

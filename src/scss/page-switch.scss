@@ -1,0 +1,55 @@
+.page-switch {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .grid-button {
+    display: flex;
+    width: 35px;
+    cursor: pointer;
+    height: 20px;
+    font-size: 14px;
+    border-width: 2px;
+    border-style: solid;
+    border-color: #fff;
+    color: #fff;
+    margin: 0 7px;
+    justify-content: center;
+    align-items: center;
+    border-radius: 5px;
+    &:hover {
+      color: #ffb100;
+      border-color: #ffb100;
+    }
+
+    &.disabled {
+      color: #777;
+      border-color: #777;
+      cursor: default;
+    }
+
+    &.active {
+      color: #ffb100;
+      border-color: #ffb100;
+    }
+  }
+}
+
+.page-switch-panel {
+  .page-switch .grid-button {
+    color: #aaa;
+    border-color: #aaa;
+    &.disabled {
+      color: #ccc;
+      border-color: #ccc;
+      cursor: default;
+    }
+
+    &.active {
+      color: #5da6ff;
+      border-color: #5da6ff;
+    }
+  }
+}

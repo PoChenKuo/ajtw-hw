@@ -10,10 +10,7 @@ export default new Vuex.Store({
       chart: "mostPopular",
       regionCode: "TW"
     },
-    likeVideoStore: {
-      videos: {},
-      currentPage: 1
-    },
+    likeVideoSurfuringPage: 1,
     videoCapacity: 0,
     storedVideos: [],
     nextPageToken: "",
@@ -42,6 +39,9 @@ export default new Vuex.Store({
     },
     updateVideoSurfingPage(state, payload) {
       state.videoSurfingPage = payload;
+    },
+    updateLikeVideoSurfingPage(state, payload) {
+      state.likeVideoSurfuringPage = payload;
     },
     removeLike(state, payload) {
       const list = state.likeList.filter(e => e !== payload);
@@ -80,6 +80,9 @@ export default new Vuex.Store({
     },
     updateVideoSurfingPage({ commit }, payload) {
       commit("updateVideoSurfingPage", payload);
+    },
+    updateLikeVideoSurfingPage({ commit }, payload) {
+      commit("updateLikeVideoSurfingPage", payload);
     },
     removeLike({ commit }, payload) {
       commit("removeLike", payload);

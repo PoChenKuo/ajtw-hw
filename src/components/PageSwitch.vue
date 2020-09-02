@@ -24,7 +24,7 @@
       @click="prevOnePage.active && updateVideoSurfingPage(prevOnePage.number)"
       :class="{disabled:!prevOnePage.active}"
     >{{prevOnePage.active?prevOnePage.number:'-'}}</span>
-    <span class="grid-button" :class="{disabled:true}">{{videoSurfingPage}}</span>
+    <span class="grid-button" :class="{active:true}">{{videoSurfingPage}}</span>
     <span
       class="grid-button"
       @click="nextOnePage.active && updateVideoSurfingPage(nextOnePage.number)"
@@ -132,33 +132,5 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.page-switch {
-  position: relative;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  .grid-button {
-    display: flex;
-    width: 35px;
-    cursor: pointer;
-    height: 20px;
-    font-size: 14px;
-    border-width: 2px;
-    border-style: solid;
-    border-color: #fff;
-    color: #fff;
-    margin: 0 7px;
-    justify-content: center;
-    align-items: center;
-    border-radius: 5px;
-
-    &.disabled {
-      color: #777;
-      border-color: #777;
-      cursor: default;
-    }
-  }
-}
+@import "~@/scss/page-switch";
 </style>

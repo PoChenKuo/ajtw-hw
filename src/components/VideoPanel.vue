@@ -19,7 +19,6 @@
     </transition-group>
     <page-switch
       v-if="!isLoading"
-      class="home-page-switch"
       :videoSurfingPage="videoSurfingPage"
       :videoCapacity="videoCapacity"
       :updateVideoSurfingPage="updateVideoSurfingPage"

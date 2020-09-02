@@ -21,14 +21,15 @@ export default {
       );
     },
     pageChange(pageNum) {
-      let target = pageNum * this.pageSize;
-      target =
-        target <= this.videoCapacity || !this.videoCapacity
-          ? target
+      let targetVideoNumber = pageNum * this.pageSize;
+      targetVideoNumber =
+        targetVideoNumber <= this.videoCapacity || !this.videoCapacity
+          ? targetVideoNumber
           : this.videoCapacity;
-      if (this.videos.length < target) {
+      const existingVideoLength = this.videos.length;
+      if (existingVideoLength < targetVideoNumber) {
         this.isLoading = true;
-        this.fetchVideos(target - this.videos.length);
+        this.fetchVideos(targetVideoNumber - existingVideoLength);
       } else {
         this.isLoading = false;
       }
