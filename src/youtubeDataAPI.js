@@ -7,19 +7,43 @@ const parseParam = param => {
   return paramStr + "key=AIzaSyCItmyq2SQ9uCIfpfIWd7zeFD8rZZeNwko";
 };
 
+const execute = (target, formater = _e => _e) => {
+  return new Promise((resolve, reject) => {
+    fetch(target)
+      .then(response => {
+        if (response.status === 200) {
+          return response.json();
+        } else {
+          throw response;
+        }
+      })
+
+      .then(data => {
+        resolve(formater(data));
+      })
+      .catch(e => {
+        alert("some error occurred");
+      });
+  });
+};
+
 const entry = {
   getListContent: param => {
     const url = base + "videos?part=contentDetails,snippet&";
-
-    const target = url + parseParam(param);
-    return new Promise((resolve, reject) => {
-      fetch(target).then(data => {
-        resolve(data.json());
-      });
-    });
+    return execute(url + parseParam(param));
   },
-  getCategory: region => {
+  getCategory: param => {
     const url = base + "videoCategories?part=snippet&";
+    const formater = data => {
+      const arr = data.items;
+      return arr.map(e => {
+        return {
+          id: e.id,
+          name: e.snippet && e.snippet.title
+        };
+      });
+    };
+    return execute(url + parseParam(param), formater);
   }
 };
 

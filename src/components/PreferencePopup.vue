@@ -5,31 +5,26 @@
       <div class="preference-popup" @mousewheel.stop>
         <font-awesome-icon :icon="closeIcon" :class="['close-icon']" @click="close" />
         <div class="context">
-          <div class="region">
+          <div class="region items">
             <b>region</b>
-            <select v-model="regionCode">
-              <option v-for="(item, ind) in regionList" :value="item" :key="ind">{{item}}</option>
-            </select>
+            <select-option
+              :value="regionCode"
+              :list="regionList"
+              @value="(value)=>regionCode=value"
+            />
           </div>
 
-          <div class="region">
+          <div class="category items">
             <b>category</b>
-
-            <select v-model="videoCategoryId">
-              <option
-                v-for="(item, ind) in categoryList"
-                :value="item.code"
-                :key="ind"
-              >{{item.name}}</option>
-            </select>
-          </div>
-
-          <div class="region">
-            <b>clean likes</b>
+            <select-option
+              :value="videoCategoryId"
+              :list="categoryList"
+              @value="(value)=>videoCategoryId=value"
+            />
           </div>
         </div>
-        <div class="apply-btn">
-          <span>Apply</span>
+        <div class="apply-btn" @click="submit">
+          <div>Apply</div>
         </div>
       </div>
     </div>
@@ -39,23 +34,37 @@
 <script>
 import { faTimes as closeIcon } from "@fortawesome/free-solid-svg-icons";
 import { mapState, mapActions } from "vuex";
+import SelectOption from "@/components/SelectOption";
+import { ytAPI } from "@/youtubeDataAPI";
 
 export default {
   name: "PreferencePopup",
   // eslint-disable-next-line vue/no-unused-components
-  components: { closeIcon },
+  components: { closeIcon, SelectOption },
   data() {
     return {
       closeIcon: closeIcon,
-      regionList: ["TW", "DE", "US", "JP"],
+      regionList: [
+        { name: "TW", value: "TW" },
+        { name: "DE", value: "DE" },
+        { name: "US", value: "US" },
+        { name: "JP", value: "JP" }
+      ],
       regionCode: null,
-      videoCategoryId: null
+      videoCategoryId: "0",
+      categorySource: []
     };
   },
   watch: {
     regionCode(nv, ov) {
       if (ov !== nv) {
-        console.log(nv);
+        // console.log(nv);
+        ytAPI.getCategory({ regionCode: nv }).then(data => {
+          this.categorySource = [...data].map(e => ({
+            value: e.id,
+            name: e.name
+          }));
+        });
       }
     },
     preferencePopupEnable(nv) {
@@ -68,12 +77,12 @@ export default {
     ...mapState(["preference", "preferencePopupEnable"]),
     categoryList() {
       const list = [];
-      list.push({ code: "0", name: "ALL" });
-      return list;
+      list.push({ value: "0", name: "ALL" });
+      return [...list, ...this.categorySource];
     }
   },
   methods: {
-    ...mapActions(["setPreferencePopupEnable"]),
+    ...mapActions(["setPreferencePopupEnable", "updatePerference"]),
     close() {
       this.setPreferencePopupEnable(false);
     },
@@ -82,6 +91,12 @@ export default {
         this.regionCode = this.preference.regionCode;
         this.videoCategoryId = this.preference.videoCategoryId;
       }
+    },
+    submit() {
+      this.updatePerference({
+        regionCode: this.regionCode,
+        videoCategoryId: this.videoCategoryId
+      });
     }
   }
 };

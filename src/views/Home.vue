@@ -29,6 +29,7 @@ export default {
   computed: {
     ...mapState([
       "preference",
+      "curPage",
       "nextPageToken",
       "videoCapacity",
       "videoSurfingPage",
@@ -67,6 +68,20 @@ export default {
   watch: {
     videoSurfingPage(nv, ov) {
       this.pageChange(nv);
+    },
+    preference(nv, ov) {
+      if (
+        (nv.regionCode !== ov.regionCode && ov.regionCode !== null) ||
+        nv.videoCategoryId !== ov.videoCategoryId
+      ) {
+        // console.log(nv, ov);
+        this.initialLoaderStatus();
+        if (this.curPage === "home") {
+          this.$nextTick(() => {
+            this.init();
+          });
+        }
+      }
     }
   },
   methods: {
@@ -74,7 +89,8 @@ export default {
       "appendVideos",
       "updateNextPageToken",
       "setVideoCapacity",
-      "updateVideoSurfingPage"
+      "updateVideoSurfingPage",
+      "clearVideos"
     ]),
     init() {
       if (this.checkExistData() === 0) {
@@ -118,7 +134,8 @@ export default {
             chart: this.preference.chart,
             maxResults: videoNum,
             regionCode: this.preference.regionCode,
-            pageToken: this.nextPageToken ? this.nextPageToken : ""
+            pageToken: this.nextPageToken ? this.nextPageToken : "",
+            videoCategoryId: this.preference.videoCategoryId
           })
           .then(res => {
             resolve(res);
@@ -132,6 +149,12 @@ export default {
     },
     checkExistData() {
       return Math.ceil((this.videos.length * 1.0) / this.pageSize);
+    },
+    initialLoaderStatus() {
+      this.clearVideos();
+      this.updateNextPageToken("");
+      this.setVideoCapacity(0);
+      this.updateVideoSurfingPage(0);
     }
   }
 };

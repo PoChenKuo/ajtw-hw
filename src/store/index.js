@@ -8,7 +8,7 @@ export default new Vuex.Store({
     curPage: "",
     preference: {
       chart: "mostPopular",
-      regionCode: "TW",
+      regionCode: null,
       videoCategoryId: "0"
     },
     likeVideoSurfuringPage: 1,
@@ -27,6 +27,9 @@ export default new Vuex.Store({
   mutations: {
     currentPage(state, payload) {
       state.curPage = payload;
+    },
+    clearVideos(state) {
+      state.storedVideos = [];
     },
     appendVideos(state, payload) {
       const list = [...state.storedVideos, ...payload];
@@ -73,6 +76,9 @@ export default new Vuex.Store({
   actions: {
     currentPage({ commit }, payload) {
       commit("currentPage", payload);
+    },
+    clearVideos({ commit }) {
+      commit("clearVideos");
     },
     appendVideos({ commit }, payload) {
       commit("appendVideos", payload);
