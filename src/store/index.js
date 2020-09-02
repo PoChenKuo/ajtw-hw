@@ -59,7 +59,7 @@ export default new Vuex.Store({
     setDescriptionPopupEnable(state, payload) {
       state.descriptionPopupEnable = payload;
     },
-    setPerferencePopupEnable(state, payload) {
+    setPreferencePopupEnable(state, payload) {
       state.preferencePopupEnable = payload;
     },
     updateDescriptionPopupContent(state, payload) {
@@ -101,8 +101,8 @@ export default new Vuex.Store({
     setDescriptionPopupEnable({ commit }, payload) {
       commit("setDescriptionPopupEnable", payload);
     },
-    setPerferencePopupEnable({ commit }, payload) {
-      commit("setPerferencePopupEnable", payload);
+    setPreferencePopupEnable({ commit }, payload) {
+      commit("setPreferencePopupEnable", payload);
     },
     updateDescriptionPopupContent({ commit }, payload) {
       commit("updateDescriptionPopupContent", payload);

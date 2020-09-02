@@ -112,10 +112,10 @@ export default {
     ...mapActions({
       updateHomeVideoSurfingPage: "updateVideoSurfingPage",
       updateLikeVideoSurfingPage: "updateLikeVideoSurfingPage",
-      setPerferencePopupEnable: "setPerferencePopupEnable"
+      setPreferencePopupEnable: "setPreferencePopupEnable"
     }),
     openSetting() {
-      this.setPerferencePopupEnable(true);
+      this.setPreferencePopupEnable(true);
     }
   }
 };

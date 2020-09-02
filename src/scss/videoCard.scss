@@ -114,15 +114,23 @@
   .video-card {
     width: 100%;
     flex-direction: row;
+    justify-content: center;
 
     .image {
-      width: 150px;
+      width: auto;
       height: 100%;
+      flex-basis: 45%;
       padding-bottom: 0;
+      border-radius: 0 0 0 5px;
       .time {
         max-width: 100%;
         box-sizing: border-box;
       }
+    }
+    .detail {
+      width: auto;
+      flex-basis: 55%;
+      border-radius: 0 0 5px 0px;
     }
   }
 }
