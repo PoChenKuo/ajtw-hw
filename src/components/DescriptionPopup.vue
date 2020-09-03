@@ -6,7 +6,10 @@
         <font-awesome-icon :icon="closeIcon" :class="['close-icon']" @click="close" />
         <div class="context">
           <div class="title">{{descriptionPopupContent.title}}</div>
-          <div class="description">{{descriptionPopupContent.description}}</div>
+          <div
+            class="description"
+            v-html="descriptionPopupContent.description.replace(/\n/g,'<br>')"
+          ></div>
         </div>
       </div>
     </div>

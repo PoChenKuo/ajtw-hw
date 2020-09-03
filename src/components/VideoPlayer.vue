@@ -1,6 +1,8 @@
 <template>
-  <div>
-    <video ref="videoPlayer" class="video-js" autoplay="true" controls="true" preload="auto"></video>
+  <div class="video-player">
+    <div class="area">
+      <video ref="videoPlayer" class="video-js" autoplay="true" controls="true" preload="auto"></video>
+    </div>
   </div>
 </template>
 
@@ -20,7 +22,6 @@ export default {
       type: Object,
       default() {
         return {
-          aspectRatio: "16:9",
           breakpoints: {
             tiny: 300,
             xsmall: 400,
@@ -77,4 +78,31 @@ export default {
 </script>
 <style lang="scss" scoped>
 @import "~video.js/dist/video-js.css";
+.video-player {
+  width: 100%;
+  height: 70vh;
+  position: relative;
+  .area {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    .video-js {
+      height: 100%;
+      width: 100%;
+    }
+  }
+}
+
+@media screen and (max-width: 767px) {
+  .video-player {
+    height: calc(100vh - 7em);
+  }
+}
+@media screen and (max-width: 1280px) {
+  .video-player {
+    height: calc(100vh - 8em);
+  }
+}
 </style>

@@ -20,6 +20,7 @@
 
     <span
       class="option-item page"
+      v-if="notInVideo"
       @click="pageSwitchEnable = !pageSwitchEnable"
       :class="{active:pageSwitchEnable}"
     >
@@ -27,12 +28,12 @@
       <span>Page</span>
     </span>
 
-    <span class="option-item setting" @click="openSetting">
+    <span class="option-item setting" v-if="notInVideo" @click="openSetting">
       <font-awesome-icon :icon="fasCogs" />
       <span>Setting</span>
     </span>
     <transition name="fadeTop">
-      <div class="page-switch-panel" v-if="pageSwitchEnable">
+      <div class="page-switch-panel" v-if="pageSwitchEnable&&notInVideo">
         <page-switch
           :videoSurfingPage="videoSurfingPage"
           :videoCapacity="videoCapacity"
@@ -89,6 +90,9 @@ export default {
     }),
     isHome() {
       return this.curPage === "home";
+    },
+    notInVideo() {
+      return this.curPage !== "video";
     },
     videoSurfingPage() {
       return this.isHome
