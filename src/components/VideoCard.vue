@@ -1,8 +1,12 @@
 <template>
   <div class="video-card">
-    <div class="image" :style="{
+    <div
+      class="image"
+      :style="{
         'background-image':`url('${image}')`
-    }">
+    }"
+      @click="playVideo(code)"
+    >
       <div class="time">{{time}}</div>
       <div class="cover inner"></div>
     </div>
@@ -74,6 +78,9 @@ export default {
         description: this.description
       });
       this.setDescriptionPopupEnable(true);
+    },
+    playVideo(code) {
+      this.$router.push(`/video/${code}`);
     }
   }
 };

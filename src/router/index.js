@@ -13,14 +13,11 @@ const routes = [
   {
     path: "/collect",
     name: "Collect",
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/Collect.vue")
   },
   {
-    path: "/video/:vid",
+    path: "/video/:vid?",
     name: "Video",
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/Video.vue")
@@ -28,7 +25,7 @@ const routes = [
 ];
 
 const router = new VueRouter({
-  mode: 'history',
+  // mode: "history",
   routes
 });
 

@@ -100,16 +100,21 @@ export default {
       }
     },
     fetchVideos(videoNum) {
-      _this.youtubeVideoLoad(videoNum).then(data => {
-        const pageInfo = data.pageInfo;
-        _this.updateVideoInfo(data);
-        data.nextPageToken && _this.updateNextPageToken(data.nextPageToken);
+      _this
+        .youtubeVideoLoad(videoNum)
+        .then(data => {
+          const pageInfo = data.pageInfo;
+          _this.updateVideoInfo(data);
+          data.nextPageToken && _this.updateNextPageToken(data.nextPageToken);
 
-        if (!_this.checkVideoLoadingInitialStatus(data)) {
-          _this.initVideoCaptacity(pageInfo);
-        }
-        _this.videoCollectingHandle(pageInfo, videoNum);
-      });
+          if (!_this.checkVideoLoadingInitialStatus(data)) {
+            _this.initVideoCaptacity(pageInfo);
+          }
+          _this.videoCollectingHandle(pageInfo, videoNum);
+        })
+        .catch(e => {
+          //
+        });
     },
     videoCollectingHandle(pageInfo, videoNum) {
       if (pageInfo && pageInfo.resultsPerPage) {
@@ -128,7 +133,7 @@ export default {
       _this.setVideoCapacity(num);
     },
     youtubeVideoLoad(videoNum) {
-      return new Promise(resolve => {
+      return new Promise((resolve, reject) => {
         ytAPI
           .getListContent({
             chart: this.preference.chart,
@@ -138,7 +143,11 @@ export default {
             videoCategoryId: this.preference.videoCategoryId
           })
           .then(res => {
-            resolve(res);
+            if (res.success) {
+              resolve(res.data);
+            } else {
+              reject(res);
+            }
           });
       });
     },

@@ -4,7 +4,9 @@ const parseParam = param => {
   for (const str in param) {
     paramStr += `${str}=${param[str]}&`;
   }
-  return paramStr + "key=AIzaSyCItmyq2SQ9uCIfpfIWd7zeFD8rZZeNwko";
+  return paramStr + "key=AIzaSyCq3stFNaY15r-2gKGFHK3wii4rY5qF1eU";
+  // AIzaSyCq3stFNaY15r-2gKGFHK3wii4rY5qF1eU
+  // AIzaSyCItmyq2SQ9uCIfpfIWd7zeFD8rZZeNwko
 };
 
 const execute = (target, formater = _e => _e) => {
@@ -19,10 +21,13 @@ const execute = (target, formater = _e => _e) => {
       })
 
       .then(data => {
-        resolve(formater(data));
+        resolve({ success: true, data: formater(data) });
       })
       .catch(e => {
-        alert("some error occurred");
+        alert(
+          "some error occurred. It could be out of daily quato (refresh at 12:00 PST) or unable fetch the data with related setting."
+        );
+        resolve({ success: false });
       });
   });
 };

@@ -78,31 +78,41 @@ export default {
         this.fetchVideos();
       }
     },
-    fetchVideos() {
+    fetchVideos(prev = null) {
       if (this.targetVideoList.length > 0) {
-        _this.youtubeVideoLoad().then(data => {
-          const items = data.items;
-          items.forEach((entry, ind) => {
-            entry.vid =
-              (_this.videoSurfingPage - 1) *
-                this.KEYWORD.DEFAULT_VIDEO_LENGTH_PER_PAGE +
-              ind;
+        _this
+          .youtubeVideoLoad()
+          .then(data => {
+            const items = data.items;
+            items.forEach((entry, ind) => {
+              entry.vid =
+                (_this.videoSurfingPage - 1) *
+                  this.KEYWORD.DEFAULT_VIDEO_LENGTH_PER_PAGE +
+                ind;
+            });
+            _this.videos = items;
+            _this.isLoading = false;
+          })
+          .catch(e => {
+            //
           });
-          _this.videos = items;
-          _this.isLoading = false;
-        });
       } else {
         this.isLoading = false;
       }
     },
     youtubeVideoLoad() {
-      return new Promise(resolve => {
+      return new Promise((resolve, reject) => {
         ytAPI
           .getListContent({
             id: _this.targetVideoList
           })
           .then(res => {
-            resolve(res);
+            // resolve(res);
+            if (res.success) {
+              resolve(res.data);
+            } else {
+              reject(res);
+            }
           });
       });
     },
