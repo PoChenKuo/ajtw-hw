@@ -7,20 +7,12 @@
         <div class="context">
           <div class="region items">
             <b>region</b>
-            <select-option
-              :value="regionCode"
-              :list="regionList"
-              @value="(value)=>regionCode=value"
-            />
+            <select-option :value.sync="regionCode" :list="regionList" />
           </div>
 
           <div class="category items">
             <b>category</b>
-            <select-option
-              :value="videoCategoryId"
-              :list="categoryList"
-              @value="(value)=>videoCategoryId=value"
-            />
+            <select-option :value.sync="videoCategoryId" :list="categoryList" />
           </div>
         </div>
         <div class="apply-btn" @click="submit">
@@ -59,11 +51,14 @@ export default {
     regionCode(nv, ov) {
       if (ov !== nv) {
         // console.log(nv);
-        ytAPI.getCategory({ regionCode: nv }).then(data => {
-          this.categorySource = [...data].map(e => ({
-            value: e.id,
-            name: e.name
-          }));
+        ytAPI.getCategory({ regionCode: nv }).then(res => {
+          if (res.success) {
+            const data = res.data;
+            this.categorySource = [...data].map(e => ({
+              value: e.id,
+              name: e.name
+            }));
+          }
         });
       }
     },
@@ -82,7 +77,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(["setPreferencePopupEnable", "updatePerference"]),
+    ...mapActions(["setPreferencePopupEnable", "updatePreference"]),
     close() {
       this.setPreferencePopupEnable(false);
     },
@@ -93,7 +88,7 @@ export default {
       }
     },
     submit() {
-      this.updatePerference({
+      this.updatePreference({
         regionCode: this.regionCode,
         videoCategoryId: this.videoCategoryId
       });

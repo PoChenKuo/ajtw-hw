@@ -43,18 +43,18 @@ export default {
       "currentPage",
       "addLike",
       "setDescriptionPopupEnable",
-      "updatePerference"
+      "updatePreference"
     ]),
     init() {
-      if (!window.localStorage.perference) {
-        window.localStorage.perference = JSON.stringify({
+      if (!window.localStorage.preference) {
+        window.localStorage.preference = JSON.stringify({
           chart: "mostPopular",
           regionCode: "TW"
         });
       }
       this.currentPage((this.$route.name || "").toLowerCase());
       this.addLike(JSON.parse(window.localStorage.like || "[]"));
-      this.updatePerference(JSON.parse(window.localStorage.perference));
+      this.updatePreference(JSON.parse(window.localStorage.preference));
     },
     middleMousedown(event) {
       this.mouseWheelDown = event.deltaY > 0;

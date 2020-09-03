@@ -56,8 +56,9 @@ export default new Vuex.Store({
       const list = [...state.likeList, ...payload];
       state.likeList = list;
     },
-    updatePerference(state, payload) {
+    updatePreference(state, payload) {
       state.preference = Object.assign({}, state.preference, payload);
+      window.localStorage.preference = JSON.stringify(state.preference);
     },
     setDescriptionPopupEnable(state, payload) {
       state.descriptionPopupEnable = payload;
@@ -101,8 +102,8 @@ export default new Vuex.Store({
     addLike({ commit }, payload) {
       commit("addLike", payload);
     },
-    updatePerference({ commit }, payload) {
-      commit("updatePerference", payload);
+    updatePreference({ commit }, payload) {
+      commit("updatePreference", payload);
     },
     setDescriptionPopupEnable({ commit }, payload) {
       commit("setDescriptionPopupEnable", payload);

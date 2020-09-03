@@ -43,7 +43,7 @@ export default {
   methods: {
     change(item) {
       //   this.value = item.value;
-      this.$emit("value", item.value);
+      this.$emit("update:value", item.value);
       this.open = false;
     }
   }
