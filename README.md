@@ -1,3 +1,16 @@
+Present the popular youtube-videos,
+list by setting ( default 4 countries )
+favorite page
+paging
+
+Youtube Data API
+Video.js
+Vue.js
+VueX
+Vue-Router
+PWA
+
+
 # ajtaiwan-homework
 
 ## Project setup
